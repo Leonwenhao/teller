@@ -14,13 +14,10 @@ We're competing in **Sentient Arena Cohort 0**. A pre-built coding agent (OpenHa
 
 1. **Prerequisites:** Docker running + a local LLM endpoint (vLLM, ollama, etc.) or OpenRouter API key.
 
-2. **Start your local model** (if using GPU):
+2. **Start MiniMax M2.5 locally** (this is the model Arena uses for scoring):
    ```bash
-   # Example with vLLM
-   vllm serve deepseek-ai/DeepSeek-V3 --port 8000
-   
-   # Example with ollama
-   ollama serve && ollama run deepseek-v3
+   # With vLLM
+   vllm serve MiniMaxAI/MiniMax-M1-80k --port 8000
    ```
 
 3. **Configure:**
@@ -29,7 +26,7 @@ We're competing in **Sentient Arena Cohort 0**. A pre-built coding agent (OpenHa
    # Edit .env — for local GPU:
    #   export LLM_BASE_URL=http://host.docker.internal:8000/v1
    #   export LLM_API_KEY=not-needed
-   #   export LLM_MODEL=deepseek-ai/DeepSeek-V3
+   #   export LLM_MODEL=MiniMaxAI/MiniMax-M1-80k
    ```
    Note: `host.docker.internal` lets Docker containers reach your host machine's model server.
 
@@ -200,11 +197,9 @@ From `officeqa_full.csv`, the 246 questions break down as:
 
 ## Budget & Model Choice
 
-**If using local GPU:** No API costs — iterate as much as you want. Use a capable open model (DeepSeek V3, Qwen 2.5 72B+, Llama 3.1 70B+). Skills improvements should transfer across models since they're behavioral instructions, not model-specific.
+**If using local GPU:** No API costs — iterate as much as you want. Run MiniMax M2.5 locally for results that directly match Arena scoring.
 
 **If using OpenRouter:** Each 20-question eval costs ~$1. Prefer targeted tests (`--filter`) when debugging a specific question, and full 20-question sweeps to confirm improvements.
-
-**Important:** The Arena competition forces MiniMax M2.5. You're iterating with a different model locally, which is fine — the skills are model-agnostic instructions about HOW to search, extract, and compute. What works for DeepSeek will largely work for MiniMax.
 
 ## NEVER STOP
 
