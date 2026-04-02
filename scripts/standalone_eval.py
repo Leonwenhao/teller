@@ -6,21 +6,21 @@ Treasury Bulletin corpus. Scores answers using the official reward function.
 
 Prerequisites:
     - Docker running
-    - OpenRouter API key (export OPENROUTER_API_KEY=...)
-    - pip install openhands-sdk  (or the script installs it in the container)
+    - LLM endpoint available (local GPU via vLLM/ollama, or OpenRouter API)
+    - Set env vars: LLM_BASE_URL, LLM_API_KEY, LLM_MODEL (see .env.example)
 
 Usage:
     # Run all 246 questions
-    python3 scripts/standalone_eval.py
+    source .env && python3 scripts/standalone_eval.py
 
     # Run specific questions
-    python3 scripts/standalone_eval.py --filter uid0023,uid0041,uid0097
+    source .env && python3 scripts/standalone_eval.py --filter uid0023,uid0041,uid0097
 
     # Run first N questions
-    python3 scripts/standalone_eval.py --limit 20
+    source .env && python3 scripts/standalone_eval.py --limit 20
 
     # Resume from where you left off
-    python3 scripts/standalone_eval.py --resume
+    source .env && python3 scripts/standalone_eval.py --resume
 """
 
 import argparse
@@ -38,7 +38,7 @@ CSV_PATH = PROJECT_DIR / "officeqa_full.csv"
 SKILLS_DIR = PROJECT_DIR / "skills"
 RESULTS_FILE = PROJECT_DIR / "results" / "standalone_results.json"
 CORPUS_IMAGE = "ghcr.io/sentient-agi/harbor/officeqa-corpus:latest"
-MODEL = "openrouter/minimax/minimax-m2.5"
+MODEL = os.environ.get("LLM_MODEL", "openrouter/minimax/minimax-m2.5")
 
 
 def load_questions(filter_uids=None, limit=None):
@@ -83,9 +83,12 @@ Write your final answer to `/app/answer.txt`. Numerical answers should be precis
 """
 
 
-def run_question_docker(uid, instruction, skills_text, api_key, timeout=600):
+def run_question_docker(uid, instruction, skills_text, timeout=600):
     """Run a single question using Docker + OpenHands SDK."""
     container_name = f"officeqa-{uid.lower()}-{int(time.time())}"
+
+    api_key = os.environ.get("LLM_API_KEY", os.environ.get("OPENROUTER_API_KEY", "not-needed"))
+    base_url = os.environ.get("LLM_BASE_URL", "https://openrouter.ai/api/v1")
 
     # Write skills to a temp file to mount
     skills_dir = Path(f"/tmp/officeqa-skills-{uid.lower()}")
@@ -130,9 +133,9 @@ def main():
                 skill_paths.append(os.path.join(skills_base, d))
 
     agent = Agent(
-        model="{MODEL}",
-        api_key=os.environ.get("LLM_API_KEY", ""),
-        base_url=os.environ.get("LLM_BASE_URL", "https://openrouter.ai/api/v1"),
+        model=os.environ.get("LLM_MODEL", "{MODEL}"),
+        api_key=os.environ.get("LLM_API_KEY", "not-needed"),
+        base_url=os.environ.get("LLM_BASE_URL", "http://localhost:8000/v1"),
         skill_paths=skill_paths if skill_paths else None,
     )
 
@@ -143,12 +146,13 @@ if __name__ == "__main__":
     main()
 ''')
 
-    # Run Docker container with corpus + agent
+    # For local GPU: host.docker.internal lets container reach host's vLLM/ollama
     docker_cmd = [
         "docker", "run", "--rm",
         "--name", container_name,
+        "--add-host", "host.docker.internal:host-gateway",
         "-e", f"LLM_API_KEY={api_key}",
-        "-e", "LLM_BASE_URL=https://openrouter.ai/api/v1",
+        "-e", f"LLM_BASE_URL={base_url}",
         "-e", f"LLM_MODEL={MODEL}",
         "-v", f"{skills_dir}:/tmp/skills:ro",
         "-v", f"{runner_script}:/tmp/run_standalone.py:ro",
@@ -248,11 +252,17 @@ def main():
     parser.add_argument("--timeout", type=int, default=600, help="Timeout per question (seconds)")
     args = parser.parse_args()
 
-    # Check API key
-    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("LLM_API_KEY")
-    if not api_key:
-        print("ERROR: Set OPENROUTER_API_KEY environment variable")
+    # Check LLM config
+    base_url = os.environ.get("LLM_BASE_URL", "")
+    api_key = os.environ.get("LLM_API_KEY") or os.environ.get("OPENROUTER_API_KEY", "")
+    if not base_url and not api_key:
+        print("ERROR: Set LLM_BASE_URL and LLM_API_KEY (see .env.example)")
+        print("  For local GPU: LLM_BASE_URL=http://host.docker.internal:8000/v1")
+        print("  For OpenRouter: LLM_API_KEY=sk-or-v1-... LLM_BASE_URL=https://openrouter.ai/api/v1")
         sys.exit(1)
+
+    print(f"  Model: {MODEL}")
+    print(f"  Endpoint: {base_url or 'default'}")
 
     # Check Docker
     if subprocess.run(["docker", "info"], capture_output=True).returncode != 0:
@@ -294,7 +304,7 @@ def main():
         print(f"\n[{i+1}/{len(questions)}] {uid} ({q.get('difficulty', '?')})...")
 
         instruction = build_instruction(q["question"])
-        result = run_question_docker(uid, instruction, skills_text, api_key, args.timeout)
+        result = run_question_docker(uid, instruction, skills_text, args.timeout)
 
         reward = score_answer(q["answer"], result["answer"])
         correct = reward > 0

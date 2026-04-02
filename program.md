@@ -12,15 +12,28 @@ We're competing in **Sentient Arena Cohort 0**. A pre-built coding agent (OpenHa
 
 ## Setup
 
-1. **Prerequisites:** Docker must be running. An OpenRouter API key is required.
+1. **Prerequisites:** Docker running + a local LLM endpoint (vLLM, ollama, etc.) or OpenRouter API key.
 
-2. **Configure:**
+2. **Start your local model** (if using GPU):
    ```bash
-   cp .env.example .env
-   # Edit .env with your OpenRouter API key (MUST have 'export' prefix)
+   # Example with vLLM
+   vllm serve deepseek-ai/DeepSeek-V3 --port 8000
+   
+   # Example with ollama
+   ollama serve && ollama run deepseek-v3
    ```
 
-3. **Pull the corpus Docker image** (public, ~2GB, has all 697 Treasury Bulletins):
+3. **Configure:**
+   ```bash
+   cp .env.example .env
+   # Edit .env — for local GPU:
+   #   export LLM_BASE_URL=http://host.docker.internal:8000/v1
+   #   export LLM_API_KEY=not-needed
+   #   export LLM_MODEL=deepseek-ai/DeepSeek-V3
+   ```
+   Note: `host.docker.internal` lets Docker containers reach your host machine's model server.
+
+4. **Pull the corpus Docker image** (public, ~2GB, has all 697 Treasury Bulletins):
    ```bash
    docker pull ghcr.io/sentient-agi/harbor/officeqa-corpus:latest
    ```
@@ -185,9 +198,13 @@ From `officeqa_full.csv`, the 246 questions break down as:
 - ~7% require external knowledge (web search)
 - ~3% reference charts/visuals (unfixable from text)
 
-## Budget
+## Budget & Model Choice
 
-Be mindful of API costs. Each 20-question eval costs ~$1 via OpenRouter. The API key has limited credits. Prefer targeted tests (`--filter`) when debugging a specific question, and full 20-question sweeps to confirm improvements.
+**If using local GPU:** No API costs — iterate as much as you want. Use a capable open model (DeepSeek V3, Qwen 2.5 72B+, Llama 3.1 70B+). Skills improvements should transfer across models since they're behavioral instructions, not model-specific.
+
+**If using OpenRouter:** Each 20-question eval costs ~$1. Prefer targeted tests (`--filter`) when debugging a specific question, and full 20-question sweeps to confirm improvements.
+
+**Important:** The Arena competition forces MiniMax M2.5. You're iterating with a different model locally, which is fine — the skills are model-agnostic instructions about HOW to search, extract, and compute. What works for DeepSeek will largely work for MiniMax.
 
 ## NEVER STOP
 
