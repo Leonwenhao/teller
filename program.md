@@ -12,28 +12,17 @@ We're competing in **Sentient Arena Cohort 0**. A pre-built coding agent (OpenHa
 
 ## Setup
 
-1. **Install prerequisites:**
-   ```bash
-   # Arena CLI
-   curl -fsSL https://install.arena.sentient.xyz | bash
-   arena auth login
-   
-   # Docker must be running
-   docker info
-   ```
+1. **Prerequisites:** Docker must be running. An OpenRouter API key is required.
 
-2. **Configure API key:**
+2. **Configure:**
    ```bash
    cp .env.example .env
-   # Edit .env with your OpenRouter API key
-   # The key MUST have the 'export' prefix
+   # Edit .env with your OpenRouter API key (MUST have 'export' prefix)
    ```
 
-3. **Generate all 246 sample questions** (if not already done):
+3. **Pull the corpus Docker image** (public, ~2GB, has all 697 Treasury Bulletins):
    ```bash
-   arena pull  # Get original 20 samples as template
-   python3 scripts/generate_samples.py  # Generate all 246
-   python3 scripts/verify_samples.py    # Verify scoring pipeline
+   docker pull ghcr.io/sentient-agi/harbor/officeqa-corpus:latest
    ```
 
 4. **Read the in-scope files** for full context:
@@ -45,9 +34,9 @@ We're competing in **Sentient Arena Cohort 0**. A pre-built coding agent (OpenHa
    - `officeqa_full.csv` — All 246 questions with ground truth answers
    - `arena.yaml` — Agent configuration (DO NOT change harness or model)
 
-5. **Establish baseline** by running the evaluation subset:
+5. **Establish baseline** by running a subset:
    ```bash
-   source .env && arena test --all --tag baseline 2>&1 | tee results/logs/baseline.log
+   source .env && python3 scripts/standalone_eval.py --limit 20
    ```
 
 6. **Initialize results.tsv:**
@@ -104,37 +93,40 @@ These are hard-won insights from weeks of iteration. Violating them WILL cause r
    - Runs out of steps on multi-file extractions — needs batch retrieval patterns
    - Sometimes doesn't write answer.txt — loses entire question score
 
-## Evaluation
+## Evaluation (Standalone — No Arena CLI Needed)
 
 **Fast eval (20 questions, ~20 min, ~$1):**
 ```bash
-# Use the original 20 sample questions
-# First restore samples to original 20
-source .env && arena test --all --tag experiment-name 2>&1 | tee results/logs/experiment-name.log
+source .env && python3 scripts/standalone_eval.py --limit 20
 ```
 
 **Targeted eval (specific questions):**
 ```bash
-source .env && arena test --filter "officeqa-uid0041" --tag test-theil
+source .env && python3 scripts/standalone_eval.py --filter uid0041,uid0097,uid0127
 ```
 
 **Full eval (246 questions, ~4 hours, ~$12):**
 ```bash
-source .env && BATCH_SIZE=10 bash scripts/run_full_eval.sh
+source .env && python3 scripts/standalone_eval.py
 ```
 
-After any eval, extract results:
+**Resume after interruption:**
 ```bash
-# From the latest run
-RUN_DIR=$(ls -dt .arena/runs/run-* | head -1)
+source .env && python3 scripts/standalone_eval.py --resume
+```
+
+Results are saved to `results/standalone_results.json` after each question (survives crashes).
+View results:
+```bash
 python3 -c "
 import json
-d = json.load(open('$RUN_DIR/results.json'))
-print(f\"Passed: {d['tasks_passed']}/{d['tasks_total']}\")
-print(f\"Cost: \${d['total_cost_usd']:.2f}\")
-for t in sorted(d['tasks'], key=lambda x: x['task_id']):
-    m = '✓' if t['status']=='passed' else '✗'
-    print(f\"  {m} {t['task_id']}\")
+d = json.load(open('results/standalone_results.json'))
+passed = sum(1 for v in d.values() if v.get('correct'))
+total = sum(1 for v in d.values() if v.get('scored'))
+print(f'Passed: {passed}/{total} ({passed/total*100:.1f}%)')
+for uid, v in sorted(d.items()):
+    m = '✓' if v.get('correct') else '✗'
+    print(f'  {m} {uid} [{v.get(\"difficulty\",\"?\")}] got={v.get(\"agent_answer\",\"?\")[:30]} exp={v.get(\"expected_answer\",\"?\")[:30]}')
 "
 ```
 
@@ -150,15 +142,24 @@ LOOP FOREVER:
 
 4. **git commit** the change with a descriptive message.
 
-5. **Run evaluation:**
+5. **Run evaluation** (use a representative subset of ~20-30 questions for speed):
    ```bash
-   source .env && arena test --all --tag exp-N 2>&1 | tee results/logs/exp-N.log
+   source .env && python3 scripts/standalone_eval.py --limit 20
+   ```
+   Or test specific failure cases:
+   ```bash
+   source .env && python3 scripts/standalone_eval.py --filter uid0041,uid0097,uid0127
    ```
 
 6. **Extract results:**
    ```bash
-   RUN_DIR=$(ls -dt .arena/runs/run-* | head -1)
-   grep -E "PASS|FAIL" results/logs/exp-N.log | sort
+   python3 -c "
+   import json
+   d = json.load(open('results/standalone_results.json'))
+   passed = sum(1 for v in d.values() if v.get('correct'))
+   total = sum(1 for v in d.values() if v.get('scored'))
+   print(f'{passed}/{total} correct ({passed/total*100:.1f}%)')
+   "
    ```
 
 7. **Log to results.tsv:**
