@@ -1,0 +1,48 @@
+# Secrets
+.env
+*.key
+credentials.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Data files (too large for git)
+officeqa/
+*.zip
+*.pdf
+treasury_bulletins_parsed/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Arena local state (large, per-machine)
+.arena/runs/
+.arena/samples/
+
+# Results (generated locally)
+results/
+
+# Backup configs (keep only active arena.yaml)
+arena.yaml.*
+skills_v*/
+
+# CLI install artifacts
+arena-cli-latest/
+
+# Misc generated docs
+arena_status_report.md
+findings_for_chat.md
+.python-version

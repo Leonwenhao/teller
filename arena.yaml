@@ -1,0 +1,16 @@
+name: "my-grounded-reasoning-agent"
+version: "0.1.0"
+competition: "grounded-reasoning"
+
+agent:
+  type: "harness"
+  harness_name: "openhands-sdk"
+  model: "openrouter/minimax/minimax-m2.5"
+  skills_dir: "skills/"
+  config:
+    reasoning_effort: "medium"
+  env:
+    LLM_API_KEY: "${oc.env:OPENROUTER_API_KEY,''}"
+    LLM_BASE_URL: "https://openrouter.ai/api/v1"
+
+environment: {}
