@@ -1,8 +1,8 @@
 # OfficeQA Methodology — Follow This For Every Question
 
 ## CRITICAL RULES
-1. You MUST write your final answer to /app/answer.txt before finishing. If you do not write this file, you score zero. Write your best answer EARLY, then refine if you have time.
-2. ALL arithmetic must be done in Python code. Never compute in natural language.
+1. **WRITE /app/answer.txt IMMEDIATELY after your FIRST extraction.** Do not wait until you've finished all steps. A rough answer scores points; an empty file scores ZERO. Overwrite it with a better answer later if you refine. Every Python block that computes a value MUST end with `with open('/app/answer.txt','w') as f: f.write(str(result))`.
+2. ALL arithmetic must be done in Python code. Never compute in natural language. For ANY statistical measure (std dev, kurtosis, z-score, Gini, VaR, median, percentile, polynomial fit, etc.), use `scipy.stats` or `numpy` — they have every function you need. Do not implement formulas from scratch.
 3. Use grep/search to find data in documents. NEVER scroll through entire files page by page.
 4. DO NOT write a plan or outline before starting. Execute immediately: read question → grep → extract → compute → write answer.
 5. Be FAST. Minimize steps: grep → read section → extract → compute → write answer. Do NOT re-read files you already read. Do NOT verify by reading answer.txt back. Aim for 3-5 tool calls total.
@@ -35,12 +35,12 @@ Find documents efficiently:
 - When extracting multiple values (a list, time series): COUNT exactly how many the question requires, extract each with its label, verify count matches before computing. A missing value cascades into a wrong answer.
 
 ### Phase 3: Compute
-Write Python code for ALL calculations:
+Write Python code for ALL calculations. **ALWAYS write to /app/answer.txt at the end of EVERY Python block** — even partial results:
 ```python
-# Print intermediate values for verification
 print(f"Extracted: {values}")
-# ... computation ...
+result = ...  # your computation
 print(f"Answer: {result}")
+# ALWAYS write answer — do this in EVERY code block, not just the last one
 with open('/app/answer.txt', 'w') as f:
     f.write(str(result))
 ```

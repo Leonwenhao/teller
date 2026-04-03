@@ -1,0 +1,12 @@
+[project]
+name = "my-grounded-reasoning-agent"
+version = "0.1.0"
+description = "Arena agent for grounded-reasoning"
+requires-python = ">=3.11"
+dependencies = [
+    "arena-sdk",
+]
+
+
+[tool.uv.sources]
+arena-sdk = { git = "https://github.com/sentient-agi/arena.git", subdirectory = "projects/arena_sdk" }

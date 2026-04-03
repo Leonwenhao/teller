@@ -9,6 +9,7 @@ agent:
   skills_dir: "skills/"
   config:
     reasoning_effort: "medium"
+    max_iterations: 100
   env:
     LLM_API_KEY: "${oc.env:OPENROUTER_API_KEY,''}"
     LLM_BASE_URL: "https://openrouter.ai/api/v1"
