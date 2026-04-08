@@ -2,7 +2,7 @@
 
 **An open-source grounded reasoning agent for enterprise document QA.**
 
-Built by [Dolores Research](https://github.com/dolores-research). Validated on the [OfficeQA benchmark](https://github.com/databricks/officeqa) by Databricks.
+Built by [Dolores Research](https://doloresresearch.com). Validated on the [OfficeQA benchmark](https://github.com/databricks/officeqa) by Databricks.
 
 | Metric | Result |
 |--------|--------|
