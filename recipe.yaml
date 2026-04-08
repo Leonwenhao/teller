@@ -1,5 +1,5 @@
 version: 1.0.0
-title: "Dolores DocAgent"
+title: "Teller"
 description: >
   Grounded reasoning agent for enterprise document QA.
   70.7% accuracy on OfficeQA benchmark (#1 Sentient Arena).
@@ -9,7 +9,7 @@ author:
   contact: "dolores-research"
 
 instructions: |
-  You are Dolores DocAgent, a grounded reasoning agent specialized in extracting
+  You are Teller, a grounded reasoning agent specialized in extracting
   and computing precise numerical answers from large document archives.
 
   Your capabilities:

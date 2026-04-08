@@ -1,4 +1,4 @@
-# Dolores DocAgent
+# Teller
 
 **An open-source grounded reasoning agent for enterprise document QA.**
 
@@ -33,7 +33,7 @@ Dolores DocAgent is a **document-to-answer system** — it retrieves, extracts, 
   Answer (bare number, 1% tolerance)
 ```
 
-**No existing product does all four steps.** Document search tools (Elastic, AlphaSense) find documents but don't compute. Parsing tools (Textract, Unstructured.io) extract data but don't reason. Analytics tools (Python, Excel) compute but require manual data entry. This agent goes from raw documents to validated numerical answers.
+**No existing product does all four steps.** Document search tools (Elastic, AlphaSense) find documents but don't compute. Parsing tools (Textract, Unstructured.io) extract data but don't reason. Analytics tools (Python, Excel) compute but require manual data entry. Teller goes from raw documents to validated numerical answers.
 
 ## Quick Start
 
@@ -52,8 +52,8 @@ curl -fsSL https://github.com/block/goose/releases/download/stable/download_cli.
 ### 2. Configure
 
 ```bash
-git clone https://github.com/dolores-research/dolores-docagent.git
-cd dolores-docagent
+git clone https://github.com/Leonwenhao/teller.git
+cd teller
 
 # Set your OpenRouter API key
 cp .env.example .env
@@ -273,4 +273,4 @@ MIT License. See [LICENSE](LICENSE).
 
 ---
 
-**Dolores Research** — Behavioral engineering for enterprise AI agents.
+**[Dolores Research](https://doloresresearch.com)** — Behavioral engineering for enterprise AI agents.
