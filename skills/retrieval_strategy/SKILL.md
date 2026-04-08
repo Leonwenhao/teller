@@ -35,6 +35,20 @@ sed -n '500,650p' /app/corpus/treasury_bulletin_1941_01.txt
 4. Try a broader search across all years: `grep -l "your term" /app/corpus/treasury_bulletin_*.txt | head -10`
 5. STEP BUDGET: If you haven't found data after ~10 searches, change your search strategy completely — try different terms, different years, or different table types. Do NOT guess.
 
+## Multi-File / Multi-Year Questions
+
+When a question spans many years (e.g., "from 1969 to 1980 inclusive"):
+
+1. **First check for a retrospective table.** A later bulletin often has a historical summary table covering the full range. Search the LATEST year first: `grep -n "your metric" /app/corpus/treasury_bulletin_1981_*.txt` — one table beats 12 separate files.
+2. **Batch grep across files.** Extract matching lines from all years in one command: `grep -h "metric name" /app/corpus/treasury_bulletin_196*.txt /app/corpus/treasury_bulletin_197*.txt`
+3. **Track extracted values in a Python dict.** After each extraction, check what's still missing:
+```python
+needed = list(range(1969, 1981))  # 1969-1980 inclusive
+found = {1969: 374443, 1970: 381327}  # fill as you go
+missing = [y for y in needed if y not in found]
+```
+4. **Count before computing.** Verify `len(found) == len(needed)` before computing any statistic. A missing value changes the answer.
+
 ## DO NOT
 - Open a file and scroll page by page — you will run out of steps
 - Read the same file more than twice — extract what you need in one pass

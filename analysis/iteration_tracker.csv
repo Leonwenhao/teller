@@ -1,5 +1,0 @@
-iteration,date,config,score_pct,easy_correct,easy_total,hard_correct,hard_total,total_correct,total_tested,avg_cost,primary_changes
-0,2026-03-23,openhands+mini+no_skills,40,3,5,1,5,4,10,0.08,Baseline with mini
-1,2026-03-23,openhands-sdk+sonnet46+skills,80,6,7,2,3,8,10,0.45,Switched to SDK + Sonnet + skills
-2,2026-03-25,openhands-sdk+sonnet46+gap_fixes,94,9,10,7,7,16,17,0.46,6 gap fixes: formatting + web search + reported-in + historical groups + versioning
-3,2026-03-25,openhands-sdk+sonnet46+unit_fix+balance_sheet,100,11,11,7,7,18,18,0.42,Unit conversion fix + balance sheet terminology

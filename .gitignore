@@ -15,7 +15,7 @@ __pycache__/
 .venv/
 venv/
 
-# Data files (too large for git)
+# Data files
 officeqa/
 *.zip
 *.pdf
@@ -28,21 +28,48 @@ treasury_bulletins_parsed/
 *.swo
 *~
 
-# Arena local state (large, per-machine)
-.arena/runs/
-.arena/samples/
-
-# Results (generated locally)
+# Arena local state
+.arena/
+arena-cli-latest/
 results/
 
-# Backup configs (keep only active arena.yaml)
+# Backup configs
 arena.yaml.*
 skills_v*/
 
-# CLI install artifacts
-arena-cli-latest/
-
-# Misc generated docs
+# Competition artifacts (kept locally, not in public repo)
+SCRATCHPAD.md
+COLD_START*.md
+GENESIS.md
+BOTCOIN_AUDIT.md
+SETUP.md
+QUICKREF.md
+CLAUDE.md
+ChatGPT_DeepResearch.md
+Claude_DeepResearch.md
+Gemini_DeepResearch.pdf
+notes/
+analysis/
+reward.py
+*.tar.gz
 arena_status_report.md
 findings_for_chat.md
 .python-version
+
+# Old prompts (only goose_prompt.j2 is production)
+prompts/officeqa_prompt.j2
+prompts/officeqa_prompt_*.j2
+
+# Competition-only scripts
+scripts/compare_runs.py
+scripts/generate_samples.py
+scripts/local_score.py
+scripts/run_full_eval.sh
+scripts/run_rerun.sh
+scripts/setup.sh
+scripts/verify_samples.py
+scripts/daytona_eval.py
+scripts/diagnostic_panel.json
+scripts/run_panel.sh
+scripts/run_targeted.sh
+scripts/run_untested.sh

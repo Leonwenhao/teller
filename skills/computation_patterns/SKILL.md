@@ -71,18 +71,20 @@ mean_val = np.mean(values)
 theil = np.mean((values / mean_val) * np.log(values / mean_val))
 ```
 
-## Pattern 4: Ratio Computation
+## Pattern 4: Named Statistical Formulas
 
-```python
-# Simple ratio
-ratio = numerator / denominator
+When the question names a specific formula, use these definitions. Do NOT implement from memory — use exactly these:
 
-# Percentage
-percentage = (part / whole) * 100
-
-# Per-capita or per-unit
-per_unit = total / count
-```
+- **Expected Shortfall (ES / CVaR) at α%:** Sort returns ascending. ES = mean of all returns at or below the α-th percentile. `np.mean(sorted_returns[:int(len(sorted_returns)*alpha)])`
+- **Arc elasticity:** `((Q2-Q1)/((Q2+Q1)/2)) / ((P2-P1)/((P2+P1)/2))`
+- **Continuously compounded growth rate:** `np.log(V_end/V_start) / n_years`
+- **Symmetric growth rate:** `2*(V2-V1)/(V2+V1)` — also called Fisher symmetric: `(V2-V1)/np.sqrt(V1*V2)`
+- **Herfindahl-Hirschman Index (HHI):** `sum(s_i**2)` where s_i are shares as decimals. Effective N = `1/HHI`
+- **Gini coefficient (2 values):** `abs(x1-x2)/(x1+x2)`
+- **Coefficient of variation:** `population_std / mean` — use ddof=0 unless question says "sample"
+- **Hazard rate (exponential decay):** `lambda = -np.log(V2/V1) / t`
+- **Winsorized range:** Sort data, replace bottom k and top k values with the k-th boundary values, then range = max−min of winsorized data
+- **Box-Cox transform:** `(x**lam - 1)/lam` if lam≠0; `np.log(x)` if lam=0
 
 **Always verify both values are in the same unit before dividing.** If one is in millions and the other in thousands, convert first.
 
@@ -119,28 +121,11 @@ calendar_year_1940 = sum([
 # Fiscal year 2024 (post-1976) = October 2023 through September 2024
 ```
 
-## Pattern 7: Validation Check
+## External Data (not in Treasury Bulletins)
 
-Run this after every computation:
+**CPI-U annual averages (BLS, base 1982-84=100):**
+1938:14.1, 1940:14.0, 1945:18.0, 1950:24.1, 1955:26.8, 1960:29.6, 1965:31.5, 1970:38.8, 1975:53.8, 1979:72.6, 1980:82.4, 1985:107.6, 1990:130.7, 1995:152.4, 2000:172.2, 2005:195.3, 2010:218.1, 2015:237.0, 2020:258.8
 
-```python
-def validate_answer(answer, question_text):
-    """Basic sanity checks before submitting"""
-    # Check for NaN or infinity
-    if answer != answer or abs(answer) == float('inf'):
-        print("ERROR: Answer is NaN or infinity — extraction likely failed")
-        return False
+To adjust to real dollars: `real_value = nominal_value * (CPI_target / CPI_source)`
 
-    # Check plausibility (customize per question type)
-    if "percent" in question_text.lower() and abs(answer) > 10000:
-        print(f"WARNING: {answer}% seems implausibly large")
-
-    if "million" in question_text.lower() and answer < 0 and "deficit" not in question_text.lower():
-        print(f"WARNING: Negative value {answer} when question doesn't suggest deficit")
-
-    return True
-```
-
----
-
-*Add new patterns as they're discovered during iteration. Every computation the agent needs should have a worked example here.*
+**Key historical dates:** WWII ended 1945 (VJ Day Aug 14). Korean War began June 25, 1950. Vietnam War: 1955-1975. Gulf War: 1990-1991.

@@ -4,9 +4,10 @@ competition: "grounded-reasoning"
 
 agent:
   type: "harness"
-  harness_name: "openhands-sdk"
+  harness_name: "goose"
   model: "openrouter/minimax/minimax-m2.5"
-  skills_dir: "skills/"
+  prompt_template_path: "prompts/goose_prompt.j2"
+  skills_dir: "skills_consolidated/"
   config:
     reasoning_effort: "medium"
     max_iterations: 100
