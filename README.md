@@ -10,17 +10,18 @@ Built by [Dolores Research](https://doloresresearch.com). Validated on the [Offi
 
 | Metric | Result |
 |--------|--------|
-| **Accuracy** | 70.7% (174/246) on OfficeQA |
-| **Rank** | #1 on [Sentient Arena](https://arena.sentient.xyz) Cohort 0 leaderboard |
+| **Accuracy** | 71.5% (176/246) on OfficeQA — highest in the competition |
+| **Rank** | #2 on [Sentient Arena](https://arena.sentient.xyz) Cohort 0 leaderboard |
+| **Score** | 187.823 (peak: 192.046) |
 | **Cost** | $1.85 total ($0.0075/question) |
 | **Model** | MiniMax M2.5 (10B active params) |
-| **vs. Claude Opus 4.5** | +2.9% accuracy at 1/500th the cost |
+| **vs. Claude Opus 4.5** | +3.7% accuracy at 1/500th the cost |
 
 > The performance gap on enterprise document reasoning is behavioral, not capability-based. A 10B-parameter model, properly orchestrated, outperforms models 20x its size.
 
 ## What This Agent Does
 
-Dolores DocAgent is a **document-to-answer system** — it retrieves, extracts, computes, and validates answers from large document archives in a single pipeline:
+Teller is a **document-to-answer system** — it retrieves, extracts, computes, and validates answers from large document archives in a single pipeline:
 
 ```
   Question (natural language)
@@ -147,7 +148,7 @@ The prompt embeds exact implementations for: linear regression, t-statistic, The
 
 ## Methodology: EvoSkill, Done By Hand
 
-Our optimization methodology parallels [Sentient's EvoSkill framework](https://github.com/sentient-agi/EvoSkill), which auto-discovers agent skills from failed trajectories. EvoSkill improved OfficeQA accuracy from 60.6% to 67.9%. We applied the same core loop manually and achieved **70.7%**:
+Our optimization methodology parallels [Sentient's EvoSkill framework](https://github.com/sentient-agi/EvoSkill), which auto-discovers agent skills from failed trajectories. EvoSkill improved OfficeQA accuracy from 60.6% to 67.9%. We applied the same core loop manually and achieved **71.5%**:
 
 ```
                     ┌───────────────────┐
