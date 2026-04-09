@@ -1,5 +1,9 @@
 # Teller
 
+<p align="center">
+  <img src="assets/teller-mascot.png" alt="Teller mascot" width="400">
+</p>
+
 **An open-source grounded reasoning agent for enterprise document QA.**
 
 Built by [Dolores Research](https://doloresresearch.com). Validated on the [OfficeQA benchmark](https://github.com/databricks/officeqa) by Databricks.
