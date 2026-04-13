@@ -11,7 +11,7 @@ Built by [Dolores Research](https://doloresresearch.com). Validated on the [Offi
 | Metric | Result |
 |--------|--------|
 | **Accuracy** | 71.5% (176/246) on OfficeQA — highest in the competition |
-| **Rank** | #2 on [Sentient Arena](https://arena.sentient.xyz) Cohort 0 leaderboard |
+| **Rank** | #1 on [Sentient Arena](https://arena.sentient.xyz) Cohort 0 leaderboard |
 | **Score** | 187.823 (peak: 192.046) |
 | **Cost** | $1.85 total ($0.0075/question) |
 | **Model** | MiniMax M2.5 (10B active params) |
